@@ -1,0 +1,166 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Source Serif 4", Georgia, ui-serif, serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+button,
+a,
+summary,
+label[for],
+[role="button"],
+[role="menuitem"],
+[role="menuitemradio"],
+input[type="submit"],
+input[type="button"],
+select {
+  cursor: pointer;
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+.field-input:-webkit-autofill,
+.field-input:-webkit-autofill:hover,
+.field-input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #fff inset;
+  -webkit-text-fill-color: #0f172a;
+  caret-color: #0f172a;
+  transition: background-color 99999s ease-out 0s;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.hero-in {
+  animation: fade-up 0.7s ease both;
+}
+
+.hero-in-delay {
+  animation: fade-up 0.7s ease 0.12s both;
+}
+
+.hero-in-late {
+  animation: fade-up 0.7s ease 0.22s both;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+
+.reveal-in {
+  opacity: 1;
+  transform: none;
+}
+
+.btn-anim {
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-anim:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgb(15 23 42 / 0.08);
+}
+
+.card-anim {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.card-anim:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgb(15 23 42 / 0.08);
+}
+
+.nav-link {
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 0;
+  height: 2px;
+  background: #075985;
+  transition: width 0.2s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.menu-in {
+  animation: fade-up 0.18s ease both;
+}
+
+.error-in {
+  animation: fade-up 0.22s ease both;
+}
+
+.chevron {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.chevron-open {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .hero-in,
+  .hero-in-delay,
+  .hero-in-late,
+  .reveal,
+  .reveal-in,
+  .menu-in,
+  .error-in,
+  .btn-anim,
+  .card-anim,
+  .nav-link::after,
+  .chevron {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1;
+    transform: none;
+  }
+}
