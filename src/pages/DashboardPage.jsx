@@ -102,7 +102,6 @@ export function DashboardPage() {
     <div className="min-h-dvh bg-sky-50 font-sans text-lg leading-7 text-slate-700 antialiased sm:text-xl sm:leading-8">
       <div className="flex min-h-dvh">
         <aside className="sticky top-0 flex h-dvh w-60 shrink-0 flex-col border-r border-slate-200 bg-white sm:w-72">
-          <div className="h-1.5 shrink-0 bg-amber-500" />
           <DashboardSidebar
             filter={filter}
             section={section}
@@ -118,7 +117,6 @@ export function DashboardPage() {
 
         <div className="flex min-w-0 flex-1 flex-col">
           <header className="sticky top-0 z-20 border-b border-slate-200 bg-white">
-            <div className="h-1.5 bg-amber-500" />
             <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
               <div className="min-w-0">
                 <p className="text-sm font-semibold uppercase tracking-[0.14em] text-amber-700">Parish desk</p>
