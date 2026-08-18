@@ -104,7 +104,6 @@ export function HomePage() {
       >
         Skip to content
       </a>
-      <div className="h-1.5 bg-amber-500" />
       <SiteHeader onWalkthrough={chooseWalkthrough} />
 
       <main id="main">

@@ -8,8 +8,7 @@ export function LoginScreen({ email, password, error, onEmail, onPassword, onSub
 
   return (
     <div className="min-h-dvh overflow-x-hidden bg-sky-50 font-sans text-lg leading-7 text-slate-700 antialiased sm:text-xl sm:leading-8">
-      <div className="h-1.5 bg-amber-500" />
-      <div className="lg:grid lg:min-h-[calc(100dvh-6px)] lg:grid-cols-[minmax(0,1fr)_min(100%,32rem)] xl:grid-cols-[minmax(0,1fr)_36rem]">
+      <div className="lg:grid lg:min-h-dvh lg:grid-cols-[minmax(0,1fr)_min(100%,32rem)] xl:grid-cols-[minmax(0,1fr)_36rem]">
         <section className="px-5 pb-4 pt-7 sm:px-8 sm:pt-10 lg:flex lg:flex-col lg:justify-center lg:bg-sky-100 lg:px-12 lg:py-16 xl:px-20">
           <Link to="/" className="hero-in inline-block font-serif text-3xl font-semibold tracking-tight text-slate-900">
             Option<span className="text-amber-600">C</span>
