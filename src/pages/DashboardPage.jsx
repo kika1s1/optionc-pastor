@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { ArrowDownUp, CheckCircle2, Mail, RotateCcw, School, Search } from 'lucide-react';
 import { DashboardSidebar } from '../components/DashboardSidebar.jsx';
 import { LoginScreen } from '../components/LoginScreen.jsx';
 import { ProfileForm } from '../components/ProfileForm.jsx';
@@ -22,6 +23,9 @@ export function DashboardPage() {
   const [inquiries, setInquiries] = useState([]);
   const [filter, setFilter] = useState('all');
   const [section, setSection] = useState('inquiries');
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [sort, setSort] = useState('newest');
 
   useEffect(() => {
     document.title = 'Inquiry dashboard — OptionC';
@@ -38,6 +42,8 @@ export function DashboardPage() {
     } catch (err) {
       if (err.status === 401) setUser(null);
       return false;
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -78,12 +84,20 @@ export function DashboardPage() {
   );
 
   const visible = useMemo(() => {
+    const query = search.trim().toLowerCase();
     return inquiries.filter((item) => {
       if (filter === 'all') return true;
       if (filter === 'new' || filter === 'contacted') return item.status === filter;
       return item.intent === filter;
+    }).filter((item) => {
+      if (!query) return true;
+      return [item.name, item.email, item.parish, item.role, item.note].some((value) => String(value || '').toLowerCase().includes(query));
+    }).sort((a, b) => {
+      const timeA = new Date(a.createdAt).getTime();
+      const timeB = new Date(b.createdAt).getTime();
+      return sort === 'oldest' ? timeA - timeB : timeB - timeA;
     });
-  }, [filter, inquiries]);
+  }, [filter, inquiries, search, sort]);
 
   if (!user) {
     return (
@@ -99,9 +113,9 @@ export function DashboardPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-sky-50 font-sans text-lg leading-7 text-slate-700 antialiased sm:text-xl sm:leading-8">
+    <div className="min-h-dvh bg-[#f6f7f8] font-sans text-base leading-7 text-slate-700 antialiased">
       <div className="flex min-h-dvh">
-        <aside className="sticky top-0 flex h-dvh w-60 shrink-0 flex-col border-r border-slate-200 bg-white sm:w-72">
+        <aside className="sticky top-0 flex h-dvh w-56 shrink-0 flex-col border-r border-slate-200 bg-white sm:w-64">
           <DashboardSidebar
             filter={filter}
             section={section}
@@ -116,11 +130,11 @@ export function DashboardPage() {
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="sticky top-0 z-20 border-b border-slate-200 bg-white">
+          <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur">
             <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
               <div className="min-w-0">
-                <p className="text-sm font-semibold uppercase tracking-[0.14em] text-amber-700">Parish desk</p>
-                <h1 className="truncate font-serif text-2xl font-semibold text-slate-900 sm:text-3xl">
+                <p className="section-kicker">Parish desk</p>
+                <h1 className="truncate font-serif text-2xl font-semibold text-slate-900">
                   {section === 'profile' ? 'Your profile' : TITLES[filter]}
                 </h1>
               </div>
@@ -128,7 +142,7 @@ export function DashboardPage() {
             </div>
           </header>
 
-          <main className="flex w-full min-w-0 flex-1 flex-col px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+          <main className="flex w-full min-w-0 flex-1 flex-col px-4 py-5 sm:px-6 lg:px-8">
             {section === 'profile' ? (
               <ProfileForm user={user} onSaved={setUser} />
             ) : (
@@ -140,12 +154,38 @@ export function DashboardPage() {
               <Stat label="Overviews" value={counts.overview} box="border-emerald-200 bg-emerald-100" tone="text-emerald-800" number="text-emerald-900" />
             </section>
 
-            {visible.length === 0 ? (
-              <p className="mt-8 rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center text-xl text-slate-500 sm:text-2xl">
+            <section className="admin-card mt-5 flex flex-col gap-3 p-3 md:flex-row md:items-center md:justify-between">
+              <label className="relative block flex-1">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
+                <span className="sr-only">Search inquiries</span>
+                <input
+                  type="search"
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="Search inquiries"
+                  className="form-field pl-9"
+                />
+              </label>
+              <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                <ArrowDownUp className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                <span>Sort</span>
+                <select value={sort} onChange={(event) => setSort(event.target.value)} className="form-field w-40">
+                  <option value="newest">Newest first</option>
+                  <option value="oldest">Oldest first</option>
+                </select>
+              </label>
+            </section>
+
+            {loading ? (
+              <p className="admin-card mt-5 px-6 py-10 text-center text-sm text-slate-500">
+                Loading inquiries…
+              </p>
+            ) : visible.length === 0 ? (
+              <p className="admin-card mt-5 border-dashed px-6 py-12 text-center text-base text-slate-500">
                 No inquiries in this list yet. When someone submits the website form, it will appear here.
               </p>
             ) : (
-              <div className="mt-8 space-y-4">
+              <div className="admin-card mt-5 overflow-hidden">
                 {visible.map((item) => (
                   <InquiryCard key={item.id} item={item} onStatus={updateStatus} />
                 ))}
@@ -162,9 +202,9 @@ export function DashboardPage() {
 
 function Stat({ label, value, box, tone, number }) {
   return (
-    <article className={`card-anim rounded-2xl border p-5 sm:p-6 ${box}`}>
-      <p className={`text-base font-semibold sm:text-lg ${tone}`}>{label}</p>
-      <p className={`mt-2 font-serif text-4xl font-semibold sm:text-5xl ${number}`}>{value}</p>
+    <article className={`admin-card p-4 ${box}`}>
+      <p className={`text-sm font-bold ${tone}`}>{label}</p>
+      <p className={`mt-1 font-serif text-3xl font-semibold ${number}`}>{value}</p>
     </article>
   );
 }
@@ -174,25 +214,32 @@ function InquiryCard({ item, onStatus }) {
   const intentClass = item.intent === 'walkthrough' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800';
   const statusClass = item.status === 'new' ? 'bg-sky-100 text-sky-800' : 'bg-slate-200 text-slate-700';
   const nextStatus = item.status === 'new' ? 'contacted' : 'new';
+  const StatusIcon = item.status === 'new' ? CheckCircle2 : RotateCcw;
+  const actionClass =
+    item.status === 'new'
+      ? 'border-sky-700 bg-sky-700 text-white hover:bg-sky-800 hover:border-sky-800'
+      : 'border-slate-300 bg-white text-slate-700 hover:border-slate-400 hover:bg-slate-50';
 
   return (
-    <article className="card-anim rounded-2xl border border-slate-200 bg-white p-5 sm:p-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h2 className="font-serif text-2xl font-semibold text-slate-900 sm:text-3xl">{item.name}</h2>
-          <p className="mt-2 text-base text-slate-500 sm:text-lg">
-            {new Date(item.createdAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
+    <article className="grid gap-4 border-b border-slate-200 bg-white p-4 last:border-b-0 xl:grid-cols-[minmax(14rem,1.4fr)_minmax(18rem,1.8fr)_auto] xl:items-start">
+      <div className="min-w-0">
+        <h2 className="truncate font-serif text-xl font-semibold text-slate-900">{item.name}</h2>
+        <p className="mt-1 text-sm text-slate-500">
+          {new Date(item.createdAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
           <Badge className={roleClass}>{item.role}</Badge>
           <Badge className={intentClass}>{item.intent === 'walkthrough' ? 'Walkthrough' : 'Overview'}</Badge>
           <Badge className={statusClass}>{item.status === 'new' ? 'New' : 'Contacted'}</Badge>
         </div>
       </div>
-      <dl className="mt-6 grid gap-4 sm:grid-cols-2">
+
+      <dl className="grid min-w-0 gap-3 md:grid-cols-2">
         <div>
-          <dt className="text-base font-semibold text-slate-500 sm:text-lg">Email</dt>
+          <dt className="admin-muted flex items-center gap-1.5 font-semibold">
+            <Mail className="h-4 w-4" aria-hidden="true" />
+            Email
+          </dt>
           <dd>
             <a className="break-all font-semibold text-sky-800 underline decoration-sky-300 underline-offset-4" href={`mailto:${item.email}`}>
               {item.email}
@@ -200,22 +247,29 @@ function InquiryCard({ item, onStatus }) {
           </dd>
         </div>
         <div>
-          <dt className="text-base font-semibold text-slate-500 sm:text-lg">Parish or school</dt>
+          <dt className="admin-muted flex items-center gap-1.5 font-semibold">
+            <School className="h-4 w-4" aria-hidden="true" />
+            Parish or school
+          </dt>
           <dd className="text-slate-800">{item.parish}</dd>
         </div>
+        {item.note ? <dd className="rounded-lg bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-700 md:col-span-2">{item.note}</dd> : null}
       </dl>
-      {item.note ? <p className="mt-6 rounded-xl bg-stone-50 px-5 py-4 text-lg leading-8 text-slate-700 sm:text-xl">{item.note}</p> : null}
-      <button
-        type="button"
-        onClick={() => onStatus(item.id, nextStatus)}
-        className="btn-anim mt-6 rounded-xl bg-sky-700 px-5 py-3 text-lg font-semibold text-white hover:bg-sky-600"
-      >
-        {item.status === 'new' ? 'Mark contacted' : 'Mark new'}
-      </button>
+
+      <div className="flex xl:justify-end">
+        <button
+          type="button"
+          onClick={() => onStatus(item.id, nextStatus)}
+          className={`inline-flex min-h-9 min-w-28 items-center justify-center gap-2 rounded-md border px-3 py-2 text-sm font-bold leading-none shadow-sm transition-colors ${actionClass}`}
+        >
+          <StatusIcon className="h-4 w-4" aria-hidden="true" />
+          {item.status === 'new' ? 'Mark contacted' : 'Mark new'}
+        </button>
+      </div>
     </article>
   );
 }
 
 function Badge({ className, children }) {
-  return <span className={`rounded-md px-3 py-1 text-base font-semibold ${className}`}>{children}</span>;
+  return <span className={`badge-ui ${className}`}>{children}</span>;
 }

@@ -4,7 +4,7 @@ import { api } from '../lib/api.js';
 import { PasswordField } from './PasswordField.jsx';
 
 const fieldClass =
-  'field-input w-full rounded-xl border border-slate-400 bg-white px-4 py-3.5 text-lg text-slate-900 outline-none ring-amber-400 placeholder:text-slate-400 focus:ring-4 sm:py-4 sm:text-xl';
+  'field-input form-field';
 
 export function ProfileForm({ user, onSaved }) {
   const [values, setValues] = useState(formFromUser(user));
@@ -70,19 +70,19 @@ export function ProfileForm({ user, onSaved }) {
 
   return (
     <form className="flex min-h-full w-full flex-col gap-6" onSubmit={submit}>
-      <div className="grid w-full flex-1 gap-6 xl:grid-cols-2">
-      <section className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 sm:p-8">
+      <div className="grid w-full flex-1 gap-5 xl:grid-cols-2">
+      <section className="admin-card flex h-full flex-col p-5 sm:p-6">
         <div className="flex flex-wrap items-center gap-4">
-          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-sky-800 font-serif text-2xl font-semibold text-white">
+          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-sky-800 font-serif text-xl font-semibold text-white">
             {mark}
           </span>
           <div>
-            <p className="text-base font-semibold uppercase tracking-[0.16em] text-amber-700">Staff record</p>
-            <h2 className="font-serif text-2xl font-semibold text-slate-900 sm:text-3xl">Your details</h2>
+            <p className="section-kicker">Staff record</p>
+            <h2 className="font-serif text-2xl font-semibold text-slate-900">Your details</h2>
           </div>
         </div>
 
-        <div className="mt-8 grid flex-1 gap-5 sm:grid-cols-2">
+        <div className="mt-6 grid flex-1 gap-4 sm:grid-cols-2">
           <Field label="Full name" id="profile-name">
             <input
               id="profile-name"
@@ -152,14 +152,14 @@ export function ProfileForm({ user, onSaved }) {
         </div>
       </section>
 
-      <section className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 sm:p-8">
-        <p className="text-base font-semibold uppercase tracking-[0.16em] text-amber-700">Password</p>
-        <h2 className="mt-2 font-serif text-2xl font-semibold text-slate-900 sm:text-3xl">Change your password</h2>
-        <p className="mt-3 text-lg leading-8 text-slate-600">
+      <section className="admin-card flex h-full flex-col p-5 sm:p-6">
+        <p className="section-kicker">Password</p>
+        <h2 className="mt-2 font-serif text-2xl font-semibold text-slate-900">Change your password</h2>
+        <p className="mt-3 text-sm leading-6 text-slate-600">
           Leave the new password blank to keep the one you already use. Changing email or password needs your current
           password.
         </p>
-        <div className="mt-6 grid flex-1 gap-5">
+        <div className="mt-6 grid flex-1 gap-4">
           <PasswordField
             id="profile-current-password"
             name="currentPassword"
@@ -204,12 +204,12 @@ export function ProfileForm({ user, onSaved }) {
       </div>
 
       {error ? (
-        <p className="error-in rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-base font-semibold text-rose-800 sm:text-lg" role="alert">
+        <p className="error-in rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-800" role="alert">
           {error}
         </p>
       ) : null}
       {saved ? (
-        <p className="error-in rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-base font-semibold text-emerald-800 sm:text-lg" role="status">
+        <p className="error-in rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800" role="status">
           Profile saved.
         </p>
       ) : null}
@@ -217,7 +217,7 @@ export function ProfileForm({ user, onSaved }) {
       <button
         type="submit"
         disabled={pending}
-        className="btn-anim rounded-xl bg-sky-700 px-6 py-3.5 text-lg font-semibold text-white hover:bg-sky-600 disabled:opacity-70 sm:text-xl"
+        className="btn-primary bg-sky-700 hover:bg-sky-600 disabled:opacity-70"
       >
         {pending ? 'Saving…' : 'Save profile'}
       </button>
@@ -228,7 +228,7 @@ export function ProfileForm({ user, onSaved }) {
 function Field({ id, label, children }) {
   return (
     <div>
-      <label htmlFor={id} className="mb-2 block text-base font-semibold text-slate-800 sm:text-lg">
+      <label htmlFor={id} className="mb-1.5 block text-sm font-bold text-slate-800">
         {label}
       </label>
       {children}
