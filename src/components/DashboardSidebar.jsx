@@ -8,26 +8,14 @@ const ITEMS = [
   { id: 'contacted', label: 'Contacted' },
 ];
 
-export function DashboardSidebar({ filter, section, counts, user, onFilter, onOpenProfile, onClose }) {
+export function DashboardSidebar({ filter, section, counts, user, onFilter, onOpenProfile }) {
   return (
-    <div className="flex h-full flex-col bg-white">
-      <div className="flex items-start justify-between gap-3 border-b border-slate-200 px-5 py-6">
-        <div>
-          <p className="font-serif text-3xl font-semibold tracking-tight text-slate-900">
-            Option<span className="text-amber-600">C</span>
-          </p>
-          <p className="mt-1 text-base font-semibold text-slate-500">Parish desk</p>
-        </div>
-        {onClose ? (
-          <button
-            type="button"
-            className="rounded-lg border border-slate-300 p-2 text-slate-700 lg:hidden"
-            aria-label="Close menu"
-            onClick={onClose}
-          >
-            <CloseIcon />
-          </button>
-        ) : null}
+    <div className="flex min-h-0 flex-1 flex-col bg-white">
+      <div className="border-b border-slate-200 px-5 py-6">
+        <p className="font-serif text-3xl font-semibold tracking-tight text-slate-900">
+          Option<span className="text-amber-600">C</span>
+        </p>
+        <p className="mt-1 text-base font-semibold text-slate-500">Parish desk</p>
       </div>
 
       <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-5" aria-label="Inquiry lists">
@@ -38,10 +26,7 @@ export function DashboardSidebar({ filter, section, counts, user, onFilter, onOp
               key={item.id}
               type="button"
               aria-current={active ? 'page' : undefined}
-              onClick={() => {
-                onFilter(item.id);
-                onClose?.();
-              }}
+              onClick={() => onFilter(item.id)}
               className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-lg font-semibold ${
                 active
                   ? 'bg-sky-100 text-sky-900 shadow-[inset_4px_0_0_0_#0284c7]'
@@ -65,10 +50,7 @@ export function DashboardSidebar({ filter, section, counts, user, onFilter, onOp
         {user ? (
           <button
             type="button"
-            onClick={() => {
-              onOpenProfile();
-              onClose?.();
-            }}
+            onClick={onOpenProfile}
             className={`mb-3 w-full rounded-xl px-4 py-3 text-left ${
               section === 'profile' ? 'bg-sky-100 shadow-[inset_4px_0_0_0_#0284c7]' : 'bg-sky-50 hover:bg-sky-100'
             }`}
@@ -78,22 +60,10 @@ export function DashboardSidebar({ filter, section, counts, user, onFilter, onOp
             <p className="truncate text-base font-semibold text-sky-800">{user.role}</p>
           </button>
         ) : null}
-        <Link
-          to="/"
-          className="block rounded-xl px-4 py-3 text-lg font-semibold text-sky-800 hover:bg-sky-50"
-          onClick={() => onClose?.()}
-        >
+        <Link to="/" className="block rounded-xl px-4 py-3 text-lg font-semibold text-sky-800 hover:bg-sky-50">
           View public site
         </Link>
       </div>
     </div>
-  );
-}
-
-function CloseIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5" aria-hidden="true">
-      <path strokeLinecap="round" d="M6 6l12 12M18 6L6 18" />
-    </svg>
   );
 }

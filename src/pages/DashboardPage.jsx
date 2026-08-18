@@ -22,29 +22,11 @@ export function DashboardPage() {
   const [inquiries, setInquiries] = useState([]);
   const [filter, setFilter] = useState('all');
   const [section, setSection] = useState('inquiries');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     document.title = 'Inquiry dashboard — OptionC';
     loadWorkspace().catch(() => setUser(null));
   }, []);
-
-  useEffect(() => {
-    if (!sidebarOpen) return undefined;
-
-    function onKeyDown(event) {
-      if (event.key === 'Escape') setSidebarOpen(false);
-    }
-
-    document.addEventListener('keydown', onKeyDown);
-    if (window.matchMedia('(max-width: 1023px)').matches) {
-      document.body.style.overflow = 'hidden';
-    }
-    return () => {
-      document.removeEventListener('keydown', onKeyDown);
-      document.body.style.overflow = '';
-    };
-  }, [sidebarOpen]);
 
   async function loadWorkspace() {
     try {
@@ -118,22 +100,9 @@ export function DashboardPage() {
 
   return (
     <div className="min-h-dvh bg-sky-50 font-sans text-lg leading-7 text-slate-700 antialiased sm:text-xl sm:leading-8">
-      <div className="h-1.5 bg-amber-500" />
-      <div className="flex min-h-[calc(100dvh-6px)]">
-        {sidebarOpen ? (
-          <button
-            type="button"
-            aria-label="Close menu"
-            className="fixed inset-0 z-30 bg-slate-900/30 lg:hidden"
-            onClick={() => setSidebarOpen(false)}
-          />
-        ) : null}
-
-        <aside
-          className={`fixed inset-y-0 left-0 z-40 w-72 shrink-0 border-r border-slate-200 bg-white shadow-xl motion-safe:transition-transform motion-safe:duration-200 lg:static lg:z-0 lg:translate-x-0 lg:shadow-none ${
-            sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          }`}
-        >
+      <div className="flex min-h-dvh">
+        <aside className="sticky top-0 flex h-dvh w-60 shrink-0 flex-col border-r border-slate-200 bg-white sm:w-72">
+          <div className="h-1.5 shrink-0 bg-amber-500" />
           <DashboardSidebar
             filter={filter}
             section={section}
@@ -144,28 +113,18 @@ export function DashboardPage() {
               setSection('inquiries');
             }}
             onOpenProfile={() => setSection('profile')}
-            onClose={() => setSidebarOpen(false)}
           />
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col">
           <header className="sticky top-0 z-20 border-b border-slate-200 bg-white">
+            <div className="h-1.5 bg-amber-500" />
             <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
-              <div className="flex min-w-0 items-center gap-3">
-                <button
-                  type="button"
-                  className="rounded-lg border border-slate-300 p-2 text-slate-800 lg:hidden"
-                  aria-label="Open menu"
-                  onClick={() => setSidebarOpen(true)}
-                >
-                  <MenuIcon />
-                </button>
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold uppercase tracking-[0.14em] text-amber-700">Parish desk</p>
-                  <h1 className="truncate font-serif text-2xl font-semibold text-slate-900 sm:text-3xl">
-                    {section === 'profile' ? 'Your profile' : TITLES[filter]}
-                  </h1>
-                </div>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold uppercase tracking-[0.14em] text-amber-700">Parish desk</p>
+                <h1 className="truncate font-serif text-2xl font-semibold text-slate-900 sm:text-3xl">
+                  {section === 'profile' ? 'Your profile' : TITLES[filter]}
+                </h1>
               </div>
               <ProfileMenu user={user} onEditProfile={() => setSection('profile')} onSignOut={logout} />
             </div>
@@ -261,12 +220,4 @@ function InquiryCard({ item, onStatus }) {
 
 function Badge({ className, children }) {
   return <span className={`rounded-md px-3 py-1 text-base font-semibold ${className}`}>{children}</span>;
-}
-
-function MenuIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-6 w-6" aria-hidden="true">
-      <path strokeLinecap="round" d="M4 7h16M4 12h16M4 17h16" />
-    </svg>
-  );
 }
