@@ -8,10 +8,10 @@ const path = require('path');
 const { createApp } = require('../server');
 
 const STAFF = {
-  name: 'Clare Brennan',
-  email: 'staff@optionc.com',
-  role: 'Director of Parish Relations',
-  password: 'ParishOffice2026',
+  name: 'Test Desk',
+  email: 'desk@example.test',
+  role: 'Parish desk',
+  password: 'TestDeskPassword1',
 };
 
 function listen(app) {
@@ -145,16 +145,25 @@ test('accepts a form and shows it on the dashboard after login', async (t) => {
 test('production start refuses weak secrets', () => {
   const { resolveRuntimeOptions } = require('../server');
   assert.throws(
-    () => resolveRuntimeOptions({ NODE_ENV: 'production', STAFF_PASSWORD: 'short', SESSION_SECRET: 'tiny' }),
+    () => resolveRuntimeOptions({ NODE_ENV: 'production', SESSION_SECRET: 'tiny' }),
+    /SESSION_SECRET/,
+  );
+  assert.throws(
+    () =>
+      resolveRuntimeOptions({
+        NODE_ENV: 'production',
+        STAFF_EMAIL: 'desk@example.test',
+        STAFF_PASSWORD: 'short',
+        SESSION_SECRET: 'a'.repeat(32),
+      }),
     /STAFF_PASSWORD/,
   );
   const runtime = resolveRuntimeOptions({
     NODE_ENV: 'production',
-    STAFF_PASSWORD: 'parish-office-1',
     SESSION_SECRET: 'a'.repeat(32),
   });
   assert.equal(runtime.secureCookies, true);
-  assert.equal(runtime.seedUser.email, 'staff@optionc.com');
+  assert.equal(runtime.seedUser, null);
 });
 
 test('updates staff profile details and password', async (t) => {
@@ -168,7 +177,7 @@ test('updates staff profile details and password', async (t) => {
     name: 'Second Desk',
     email: 'other@optionc.com',
     role: 'Office',
-    password: 'ParishOffice2026',
+    password: 'TestDeskPassword1',
   });
 
   const locked = await fetch(ctx.base + '/api/profile', {

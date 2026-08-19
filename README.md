@@ -13,20 +13,17 @@ npm run dev
 - API + built site: http://localhost:3000
 - Dashboard: http://localhost:3000/dashboard
 
-### Staff login
+Staff accounts live in `data/optionc.db` only. They are not stored in this repository. Create or reset a desk user with environment variables if the database has none yet:
 
-| Field | Value |
-| --- | --- |
-| Email | `staff@optionc.com` |
-| Password | `ParishOffice2026` |
-
-The first start creates that user in `data/optionc.db`. Change it with `STAFF_EMAIL`, `STAFF_PASSWORD`, `STAFF_NAME`, and `STAFF_ROLE`.
+```bash
+STAFF_EMAIL=you@example.com STAFF_PASSWORD=at-least-12-chars npm start
+```
 
 ## Production
 
 ```bash
 npm run build
-STAFF_PASSWORD=at-least-12-chars SESSION_SECRET=at-least-32-character-secret npm start
+SESSION_SECRET=at-least-32-character-secret npm start
 ```
 
-`NODE_ENV=production` refuses to start without those secrets, and refuses to start if `dist/` has not been built.
+`NODE_ENV=production` refuses to start without `SESSION_SECRET`, and refuses to start if `dist/` has not been built.

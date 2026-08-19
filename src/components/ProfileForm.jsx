@@ -117,7 +117,7 @@ export function ProfileForm({ user, onSaved }) {
               inputMode="email"
               autoComplete="email"
               required
-              placeholder="staff@optionc.com"
+              placeholder="pastor@stathanasius.org"
               value={values.email}
               onChange={update}
               className={fieldClass}

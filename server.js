@@ -28,27 +28,28 @@ const RATE_LIMIT = 10;
 
 function resolveRuntimeOptions(env = process.env) {
   const isProd = env.NODE_ENV === 'production';
-  const staffEmail = String(env.STAFF_EMAIL || 'staff@optionc.com').trim().toLowerCase();
-  const staffPassword = env.STAFF_PASSWORD || env.DASHBOARD_PASSWORD || (isProd ? '' : 'ParishOffice2026');
+  const staffEmail = String(env.STAFF_EMAIL || '').trim().toLowerCase();
+  const staffPassword = env.STAFF_PASSWORD || env.DASHBOARD_PASSWORD || '';
 
-  if (isProd) {
-    if (!staffPassword || staffPassword.length < 12) {
-      throw new Error('STAFF_PASSWORD must be at least 12 characters in production.');
-    }
-    if (!env.SESSION_SECRET || env.SESSION_SECRET.length < 32) {
-      throw new Error('SESSION_SECRET must be at least 32 characters in production.');
-    }
+  if (isProd && (!env.SESSION_SECRET || env.SESSION_SECRET.length < 32)) {
+    throw new Error('SESSION_SECRET must be at least 32 characters in production.');
+  }
+  if (staffPassword && staffPassword.length < 12) {
+    throw new Error('STAFF_PASSWORD must be at least 12 characters.');
   }
 
   return {
     secret: env.SESSION_SECRET || 'optionc-dev-secret',
     secureCookies: isProd,
-    seedUser: {
-      name: env.STAFF_NAME || 'Clare Brennan',
-      email: staffEmail,
-      role: env.STAFF_ROLE || 'Director of Parish Relations',
-      password: staffPassword,
-    },
+    seedUser:
+      staffEmail && staffPassword
+        ? {
+            name: env.STAFF_NAME || 'Staff',
+            email: staffEmail,
+            role: env.STAFF_ROLE || 'Parish desk',
+            password: staffPassword,
+          }
+        : null,
   };
 }
 
@@ -245,9 +246,6 @@ if (require.main === module) {
   }).listen(port, () => {
     console.log(`OptionC listening on http://localhost:${port}`);
     console.log(`Dashboard: http://localhost:${port}/dashboard`);
-    if (process.env.NODE_ENV !== 'production') {
-      console.log(`Staff login: ${runtime.seedUser.email} / ${runtime.seedUser.password}`);
-    }
   });
 }
 
